@@ -1,0 +1,1 @@
+/opt/stack/cloudkitty-dashboard/cloudkittydashboard/enabled/_12_project_reporting_panel.py

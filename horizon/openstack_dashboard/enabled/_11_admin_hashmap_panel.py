@@ -1,0 +1,1 @@
+/opt/stack/cloudkitty-dashboard/cloudkittydashboard/enabled/_11_admin_hashmap_panel.py

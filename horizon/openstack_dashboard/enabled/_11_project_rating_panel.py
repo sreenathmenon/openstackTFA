@@ -1,0 +1,1 @@
+/opt/stack/cloudkitty-dashboard/cloudkittydashboard/enabled/_11_project_rating_panel.py

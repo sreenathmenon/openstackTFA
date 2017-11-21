@@ -1,0 +1,29 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+{% block form_id %}two_factor_form{% endblock %}
+
+{% block form_action %}{% url 'totpSubmit' %}{% endblock %}
+
+{% block modal-header %}{% trans "Two Factor Authentication" %}{% endblock %}
+{% block modal_class %}login {% if hide %}modal{% endif %}{% endblock %}
+
+{% block modal-body %}
+  <div class="form-group">
+    {% if request.session.totp_error %}
+        <div class="alert alert-message alert-danger">
+            {{ request.session.totp_error }}
+        </div>
+    {% endif %}
+    
+    <label class="control-label" for="totp_code">Two Factor Code</label>
+    <div class=" ">
+        <input autofocus="autofocus" class="form-control totp" name="totp" type="text" placeholder= "Two-factor code" />
+    </div>
+  </div>
+{% endblock %}
+
+{% block modal-footer %}
+  <input class="btn btn-primary pull-right totp_submit_btn" type="submit" value="{% trans "Verify" %}" />
+{% endblock %}
+             

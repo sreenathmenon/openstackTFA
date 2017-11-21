@@ -1,0 +1,1 @@
+/opt/stack/cloudkitty-dashboard/cloudkittydashboard/enabled/_13_admin_pyscripts_panel.py

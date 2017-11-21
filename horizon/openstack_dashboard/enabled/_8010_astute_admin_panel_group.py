@@ -1,0 +1,3 @@
+PANEL_GROUP = 'astute'
+PANEL_GROUP_NAME = 'Billing'
+PANEL_GROUP_DASHBOARD = 'admin'
