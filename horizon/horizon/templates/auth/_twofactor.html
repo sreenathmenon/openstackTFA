@@ -6,7 +6,7 @@
 {% block form_action %}{% url 'totpSubmit' %}{% endblock %}
 
 {% block modal-header %}{% trans "Two Factor Authentication" %}{% endblock %}
-{% block modal_class %}login {% if hide %}modal{% endif %}{% endblock %}
+{% block modal_class %}login twofactor-page {% if hide %}modal{% endif %}{% endblock %}
 
 {% block modal-body %}
   <div class="form-group">

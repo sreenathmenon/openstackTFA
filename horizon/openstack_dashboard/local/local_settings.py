@@ -715,6 +715,7 @@ ZENDESK_ADMIN_PASSWORD   = 'ath3naw1zd0m'
 ZENDESK_ADMIN_TIMEZONE   = 'US/Pacific'
 ZENDESK_SUBDOMAIN        = 'nephoscale-stage'
 
+####For Google 2FA - Speciy V3 based token url #######
 KEYSTONE_V3_TOKEN_URL    = 'http://192.168.122.230:5000/v3/auth/tokens'
 
 
@@ -730,5 +731,5 @@ KEYSTONE_ADMIN_PROJECT_NAME         = 'admin'
 KEYSTONE_ADMIN_PROJECT_DOMAIN_NAME  = 'Default'
 KEYSTONE_ADMIN_USERNAME             = 'admin'
 KEYSTONE_ADMIN_USER_DOMAIN_NAME     = 'Default'
-EKEYSTONE_ADMIN_AUTH_URL            = 'http://192.168.122.230:5000/v2.0'
+KEYSTONE_ADMIN_AUTH_URL             = 'http://192.168.122.230:5000/v2.0'
 KEYSTONE_ADMIN_PASSWORD             = 'admin'
