@@ -53,12 +53,12 @@ def totpSubmit(request):
             return response
         else:
             print 'top value is falseeeeeee 1'
-            request.session['totp_error'] = 'Two Factor Code is Incorrect!'
+            request.session['totp_error'] = 'Two Factor Authentication code is Incorrect!'
             response = shortcuts.redirect('/dashboard/twofactor')
             return response
     else:
         print 'top value is falseeeeeee 2'
-        request.session['totp_error'] = 'Two Factor Code is Incorrect!2'
+        request.session['totp_error'] = 'Two Factor Authentication code is Incorrect!'
         response = shortcuts.redirect('/dashboard/twofactor')
         return response
 
