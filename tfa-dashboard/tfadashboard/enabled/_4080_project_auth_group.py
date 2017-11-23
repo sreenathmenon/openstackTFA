@@ -12,20 +12,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-#Slug of the Panel group
+#Slug of the panel group
 PANEL_GROUP = 'user_auth'
 
-#Name of the Panel which is to be displayed
-PANEL_DASHBOARD = 'settings'
+#Panel group name
+PANEL_GROUP_NAME = 'Authentication Settings'
 
-#Slug of the panel
-PANEL = 'authsettings'
-
-#Python Panel class of the PANEL to be added
-ADD_PANEL = \
-    'tfadashboard.dashboards.settings.authsettings.panel.Settings_TwoFactorPanel'
-
-#If set to True, the PANEL will be removed from PANEL_DASHBOARD/PANEL_GROUP.
-#Set the below option to TRUE if Two factor authentication management panel shouldn't be displayed
-REMOVE_PANEL = False
-
+#Slug of the dashboard under which the panel group is to be shown
+PANEL_GROUP_DASHBOARD = 'settings'
