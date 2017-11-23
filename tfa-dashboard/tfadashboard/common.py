@@ -85,7 +85,8 @@ def generate_2fa_uri(secret, name):
         uri: a uri which can be used for generating the QR code
 
     """
-    uri = 'otpauth://totp/{name}?secret={secret}&issuer={issuer}'.format(name=name, secret=secret, issuer='M1 Dashboard')
+    #No spaces should be present in name or issue field
+    uri = 'otpauth://totp/{name}?secret={secret}&issuer={issuer}'.format(name=name, secret=secret, issuer='M1-Dashboard')
     return uri
 
 
