@@ -1,4 +1,4 @@
-# Copyright 2012 Nebula, Inc.
+# Copyright 2017 Nephoscale
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -37,34 +37,16 @@ from tfadashboard.common import user_details, get_2fa_auth_details, generate_tot
 LOG = log.getLogger(__name__)
 
 class Manage2FAForm(forms.SelfHandlingForm):
-    print "Form section"
     action      = reverse_lazy('horizon:settings:authsettings:twofactor')
     description = 'Manage two-factor authentication'
     template    = 'settings/authsettings/_two_factor.html'
 
-    print "manage two factor"
-    """
-    def clean(self):
-        data = super(Manage2FAForm, self).clean()
-        if self.request.POST.get('enable', None):
-	    print "test"
-        return data
-    """
-
     def handle(self, request, data):
         try:
-
             user_id = self.request.user.id
-            user    = user_details(request)
-            print user    
+            user    = user_details(request) 
             secret, uri = get_2fa_auth_details(request, user)
-            print "DSdddddddddddddddddddddddddddddddddddddddddddddddddddddDDD"
-            print secret
-            print uri
-            print "dsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAA"
- 
-            LOG.info('Enabled two factor authentication or new key requested')
-            
+
             if request.is_ajax():
                 context = {}
 
@@ -73,13 +55,7 @@ class Manage2FAForm(forms.SelfHandlingForm):
                 qr_buffer = io.BytesIO()
                 qr.svg(qr_buffer, scale=5)
                 context['two_factor_qr_encoded'] = base64.b64encode(qr_buffer.getvalue())
-                print "#################################@@@@"
-                #print qr
-                print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-                print context
                 current_totp = generate_totp(secret)
-                print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-                print current_totp
                 context['hide'] = True
                 return shortcuts.render(request, 'settings/authsettings/_two_factor_newkey.html', context)
             else:
@@ -98,11 +74,9 @@ class Disable2FAForm(forms.SelfHandlingForm):
 
     def handle(self, request, data):
             try:
-                print "disable -section"
                 user_id = self.request.user.id
                 user    = user_details(request)
                 disable_2fa(request, user)
-                print('after disabling')
                 messages.success(request, "Two factor authentication was successfully disabled for your account.")
                 LOG.info('Disabled two factor authentication')
                 return shortcuts.redirect('horizon:settings:authsettings:index')

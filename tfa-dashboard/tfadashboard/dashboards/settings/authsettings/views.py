@@ -1,4 +1,4 @@
-# Copyright 2012 Nebula, Inc.
+# Copyright 2017 Nephoscale
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -29,51 +29,24 @@ from django.http import JsonResponse
 
 class IndexView(forms.ModalFormView):
     """View for Managing the 2Factor Authentication Settings"""
+    
     form_class = twofactor_forms.Manage2FAForm
-    print "test"
     template_name = 'settings/authsettings/two_factor.html'
-    print "after template"
 
     def get_context_data(self, **kwargs):
-        print "get context section"
         context = super(IndexView, self).get_context_data(**kwargs)
-        print "after context"
-        print "###################"
-        
-        print "%%%%%%%%%%%%"
-        print self.request.user.id
-        print "%%%%%%%%%%%%%"
 
         #Fetching the userid and using that to get the full user information
-        #user_id = api.keystone.get_user_id(self.request)
-        #user = api.keystone.user_details(self.request, user_id)
         user = user_details(self.request)
-
-        print "#################Views page #########################"
-        print user
-        print type(user)
-
         two_factor_enabled = getattr(user, 'two_factor_enabled', False)
-        
-        print two_factor_enabled
-        print type(two_factor_enabled)
-        print '&&&&&&&&&&&&&&&&'
-	    #Checking whether user has enabled 2FA
-     	#two_factor_enabled = user.two_factor_enabled
-        #two_factor_enabled = True
-
-    	#Fetching the user's phone number
-    	#user_phone_number = user.phone
 
 	    #Converting to bool to fix errors
     	if type(two_factor_enabled) == unicode:
-	        print "Entering the loop since type is unicode"
 	        two_factor_enabled = self.str2bool(two_factor_enabled)
 
     	#Set true if the user has enabled 2FA
     	if two_factor_enabled:
 	        context['two_factor_enabled'] = True
-	        #context['user_phone_number'] = user_phone_number
     	else:
 	        context['two_factor_enabled'] = False
         return context
@@ -86,22 +59,19 @@ class Disable2FAView(forms.ModalFormView):
         user_id = self.request.user.id
         user = user_details(request)
         if not user.two_factor_enabled:
-            print "Two factor not enabled"
             return redirect('horizon:settings:authsettings:index')
 
-        print "returning section"
         return super(Disable2FAView, self).dispatch(request, args, kwargs)
 
 
 class Manage2FAKeyView(views.APIView):
-    print('Enteringgggg')
     template_name = 'settings/authsettings/two_factor_newkey.html'
 
     def get_template_names(self):
         if self.request.is_ajax():
             if not hasattr(self, "ajax_template_name"):
 
-                # Transform standard template name to ajax name (leading "_")
+                # Transform standard template name into ajax name (starting with "_")
                 bits = list(os.path.split(self.template_name))
                 bits[1] = "".join(("_", bits[1]))
                 self.ajax_template_name = os.path.join(*bits)
@@ -125,21 +95,12 @@ def validate_code(request):
     """To validate the TOTP code entered by the user for enabling 2FA"""
     
     user_id = request.user.id
-    print "USER CHECK"
-    print user_id
     user = user_details(request)
     user_auth_code = request.GET.get('auth_code', None)
     secret = request.GET.get('secret', None)
 
     #Generate a code form our side using algorithm and use it to validate
     generated_code = generate_totp(secret)
-
-    print secret
-    print 'user'
-    print user_auth_code
-    print generated_code
-    print 'entering code comparison'
-
     data = {}
     extra = {}
 
@@ -150,6 +111,5 @@ def validate_code(request):
         extra['secret_key'] = secret
         enable_2fa(request, user, **extra)
     else:
-        print 'falseeeeee'
         data['totp_authenticated'] = False
     return JsonResponse(data)

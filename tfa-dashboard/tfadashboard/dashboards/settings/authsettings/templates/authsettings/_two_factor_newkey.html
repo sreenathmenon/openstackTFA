@@ -52,121 +52,76 @@
     </div>
 </div>
 
-<script type="text/javascript">
-
-(function() {
-    var s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.async = true;
-    //s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.3.1/sha.js';
-    s.src = 'https://caligatio.github.io/jsSHA/sha.js';
-    var x = document.getElementsByTagName('script')[0];
-    x.parentNode.insertBefore(s, x);
-})();
-
-</script>
-
 
 <script type="text/javascript">
-//$('.enable_2fa').attr('disabled', true);
 
-
-/*
-$('#confirmation_code').bind('keypress', function (e) {
-   if (this.value.length>= 6) {
-       alert('Maximum limit is 6'); return false;
-   }
-   return !(e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 46);
-});
-*/
-/*
     // AJAX setup functions
     var beforeSend = function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-        horizon.modals.modal_spinner(gettext("Verifying"));
+        horizon.modals.modal_spinner(gettext("Loading"));
     };
-*/
-/*    
-var complete = function(){
-        // Clear the global storage;
-        //horizon.modals._request = null;
+
+    var complete = function(){
+        horizon.modals._request = null;
         horizon.modals.spinner.modal('hide');
     };
-*/
 
-/*
-//Validation to accept only numbers
-    $("#confirmation_code").keydown(function (e) {
-        // Allow: backspace, delete, tab, escape, enter and .
-        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
-             // Allow: Ctrl+A, Command+A
-            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
-             // Allow: home, end, left, right, down, up
-            (e.keyCode >= 35 && e.keyCode <= 40)) {
-                 // let it happen, don't do anything
-                 return;
+    var error = function(jqXHR, status, errorThrown) {
+        if (jqXHR.status === 401){
+            var redir_url = jqXHR.getResponseHeader("X-Horizon-Location");
+            if (redir_url){
+                location.href = redir_url;
+            } else {
+                location.reload(true);
+            }
         }
-        // Ensure that it is a number and stop the keypress
-        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-            e.preventDefault();
+        else {
+            if (!horizon.ajax.get_messages(jqXHR)) {
+                // Generic error handler. Really generic.
+                horizon.alert("danger", gettext("An error occurred. Please try again later."));
+            }
         }
-    });
+    };
 
 
+$(".enable_2fa").click(function(e) {
+    e.preventDefault();
 
-var max_chars = 6;
-
-//Validation to accpet onlyu 6 digits for confiramtion code
-$('#confirmation_code').keydown( function(e){
-    if ($(this).val().length >= max_chars) { 
-        $(this).val($(this).val().substr(0, max_chars));
+    // If there's an existing modal request open, cancel it out.
+    if (horizon.modals._request && typeof(horizon.modals._request.abort) !== undefined) {
+        horizon.modals._request.abort();
     }
-});
-
-$('#confirmation_code').keyup( function(e){
-    if ($(this).val().length >= max_chars) { 
-        $(this).val($(this).val().substr(0, max_chars));
-    }
-});
-*/
-
-//$("#confirmation_code").change(function() {
-$(".enable_2fa").click(function() {
+ 
     var auth_code = $('#confirmation_code').val();
     var secret = $('.manual_code').text();
-    //$('.enable_2fa').attr('disabled', true);
-    //alert(auth_code);
-    //alert('test');
+    
+    $(this).attr('disabled','disabled');
     console.log(auth_code);
+    $('.enable_2fa').prop('disabled', true);
 
-     $.ajax({
+    horizon.modals._request = $.ajax({
         url: '/dashboard/settings/authsettings/ajax/validate_code/',
         data: {
-          'auth_code': auth_code,
-          'secret': secret
+          "auth_code": auth_code,
+          "secret": secret
         },
-        dataType: 'json',
-        //beforeSend: function() {
-            //$("#modal_wrapper .modal").last().modal("hide");
-         //   horizon.modals.modal_spinner(gettext("Verifying"));
-       // },
-        //complete: function(jqXHR) {
-          //  horizon.modals.spinner.modal('hide');
-       // },
-        success: function (data) {
+        dataType: "json",
+        beforeSend: beforeSend,
+        complete: complete,
+        success: function (data, textStatus, jqXHR) {
             if (data.totp_authenticated) {
-               // $("#modal_wrapper .modal").last().modal("hide");
+                //$("#modal_wrapper .modal").last().modal("hide");
+                modal = horizon.modals.success(data, textStatus, jqXHR);
                 alert('Success! Codes are matching. Redirecting you back to the 2FA page. Please wait');
                 location.reload();
-                $('.enable_2fa').removeAttr("disabled");
             } else {
-                //$("#modal_wrapper .modal").last().modal("show"); 
+                $('.enable_2fa').removeAttr('disabled');
+                $("#two_factor_enable_modal").modal("show");
+                $('#two_factor_enable_modal').css('overflow', 'auto');
                 $('#confirmation_code').val("");
                 alert('Code Mismatch!. Please scan the QR code and enter the correct code from your Authenticator app or else go back and regenerate the Key.');
             }
-        }
+        },
+        error: error
       });
 });
 
@@ -175,9 +130,5 @@ $(".enable_2fa").click(function() {
 {% endblock %}
 
 {% block modal-footer %}
-    {% if hide %}
-      <!--<a href="{% url 'horizon:settings:authsettings:index' %}" class="btn btn-primary enable_2fa">Enable Two-Factor Authentication</a>-->
-          <a class="btn btn-primary enable_2fa">Enable Two-Factor Authentication</a>
-      <!--<a href="#" class="btn btn-default secondary cancel_newkey">Cancel</a>-->
-      {% endif %}
+    <a class="btn btn-primary enable_2fa">Enable Two-Factor Authentication</a>
 {% endblock %}

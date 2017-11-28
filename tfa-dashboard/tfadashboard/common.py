@@ -1,6 +1,16 @@
+# Copyright 2017 Nephoscale
 #
-#Copyright 2017 Nephoscale
-# 
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
 
 import os
 import base64
@@ -17,11 +27,6 @@ from keystoneauth1.identity import v2
 from keystoneauth1 import session
 from keystoneclient.v2_0 import client as kclient
 from django.conf import settings
-
-"""
-from openstack_dashboard.local.local_settings import \
-        ASTUTE_BASE_URL, 
-"""
 
 ######Section Used for 2 Factor Authentication
 def kclient_connect(request):
@@ -50,8 +55,6 @@ def kclient_connect(request):
     keystone_cred['password'] = password
     keystone_cred['auth_url'] = auth_url
 
-    print keystone_cred
-
     auth      = v2.Password(**keystone_cred)
     sess      = session.Session(auth=auth)
     keystone  = kclient.Client(session=sess)
@@ -68,10 +71,8 @@ def user_details(request):
     """Fetch the information of any user"""
     user_id = request.user.id
     keystone = kclient_connect(request)
-    print('user_details function entering')
     user = keystone.users.get(user_id)
     return user
-
 
 def generate_2fa_uri(secret, name):
     """Generate a uri based on secret key.
@@ -85,13 +86,17 @@ def generate_2fa_uri(secret, name):
         uri: a uri which can be used for generating the QR code
 
     """
-    #No spaces should be present in name or issue field
-    uri = 'otpauth://totp/{name}?secret={secret}&issuer={issuer}'.format(name=name, secret=secret, issuer='M1-Dashboard')
-    return uri
+    #Setting default value as Dashboard
+    issuer_name    = getattr(settings, 'TFA_ISSUER_NAME', 'Dashboard')
 
+    #Replacing space with '-' to fix Iphone compatibility issues
+    issuer_name    = issuer_name.replace(" ", "-")
+    uri = 'otpauth://totp/{name}?secret={secret}&issuer={issuer}'.format(name=name, secret=secret, issuer=issuer_name)
+    return uri
 
 def get_2fa_auth_details(request, user):
     """Generates a random secret key and pass it to generate the unique uri."""
+    
     secret = base64.b32encode(os.urandom(10)).decode('utf-8')
 
     #Name of the user
@@ -100,7 +105,6 @@ def get_2fa_auth_details(request, user):
     #Generate the uri based on the above generated secret key
     uri    = generate_2fa_uri(secret, name)
     return secret, uri
-
 
 def enable_2fa(request, user, **data):
     """To enable two factor authentication for a user.
@@ -117,10 +121,8 @@ def enable_2fa(request, user, **data):
     data['two_factor_enabled'] = True
 
     if user_update_2fa_details(request, user, **data):
-        print "entered into user_update function loop for enabling 2FA"
         return True
     else:
-        print "user_update failure for 2FA"
         return False
 
 def disable_2fa(request, user):
@@ -138,10 +140,8 @@ def disable_2fa(request, user):
     data['two_factor_enabled'] = False
 
     if user_update_2fa_details(request, user, **data):
-        print "entered into user_update function loop for disabling 2FA"
         return True
     else:
-        print "user_update failure"
         return False
 
 
@@ -150,13 +150,9 @@ def user_update_2fa_details(request, user, **data):
 
     #manager = keystoneclient(request, admin=True).users
     manager = kclient_connect(request).users
-    print manager
-    print '%%%%%%%%%%%%%%%%%%%%%%%5'
     if manager.update(user, **data):
-        print "success"
         return True
     else:
-        print "FAILURE"
         return False
 
 def auth_2fa_is_enabled(request, user):
@@ -171,7 +167,6 @@ def auth_2fa_is_enabled(request, user):
     """
 
     manager = keystoneclient(request, admin=True).users
-    print "$$$$$Entering 2fa enabked checking function"
     return True
 
 
@@ -189,18 +184,13 @@ def generate_totp(secret, time_range=30, i=0):
         The unique TOTP value based on the current time.
 
     """
-
-    print('generate totp function')
-
+    
     #Converting the secret key
     secret = base64.b32decode(secret, True)
     tm = int(time.time() / time_range)
     b = struct.pack(">q", tm + i)
-    print type(secret)
     secret = str(secret)
-    print type(secret)
     hm = hmac.HMAC(secret, b, hashlib.sha1).digest()
-    offset = ord(hm[-1]) & 0x0F
     truncatedHash = hm[offset:offset + 4]
     code = struct.unpack(">L", truncatedHash)[0]
     code &= 0x7FFFFFFF
@@ -208,10 +198,5 @@ def generate_totp(secret, time_range=30, i=0):
     return "%06d" % code
 
 def str2bool(self, v):
-        """Function For converting unicode values to bool"""
-        print('Entering conversion function')
-        return v.lower() in ("yes", "true", "t", "1")
-
-#####End of Section used for 2Factor Authentication
-
-
+    """Function For converting unicode values to bool"""
+    return v.lower() in ("yes", "true", "t", "1")
