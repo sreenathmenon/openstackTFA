@@ -191,6 +191,7 @@ def generate_totp(secret, time_range=30, i=0):
     b = struct.pack(">q", tm + i)
     secret = str(secret)
     hm = hmac.HMAC(secret, b, hashlib.sha1).digest()
+    offset = ord(hm[-1]) & 0x0F
     truncatedHash = hm[offset:offset + 4]
     code = struct.unpack(">L", truncatedHash)[0]
     code &= 0x7FFFFFFF
