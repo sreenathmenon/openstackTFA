@@ -25,14 +25,6 @@ PANEL = 'authsettings'
 ADD_PANEL = \
     'tfadashboard.dashboards.settings.authsettings.panel.Settings_TwoFactorPanel'
 
-# Adding js files
-ADD_JS_FILES = [
-    'dashboard/settings/authsettings/authsettings.js'
-]
-
-# Adding CSS FILES
-ADD_SCSS_FILES = ['dashboard/settings/authsettings/authsettings.scss']
-
 #If set to True, the PANEL will be removed from PANEL_DASHBOARD/PANEL_GROUP.
 #Set the below option to TRUE if Two factor authentication management panel shouldn't be displayed
 REMOVE_PANEL = False

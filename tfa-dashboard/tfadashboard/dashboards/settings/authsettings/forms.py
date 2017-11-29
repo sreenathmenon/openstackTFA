@@ -31,10 +31,11 @@ from horizon import forms
 from horizon import messages
 from openstack_dashboard import api
 from django.core.urlresolvers import reverse_lazy
-from oslo_log import log
+import logging
 from tfadashboard.common import user_details, get_2fa_auth_details, generate_totp, disable_2fa
 
-LOG = log.getLogger(__name__)
+LOG = logging.getLogger(__name__)
+LOG.info(__name__)
 
 class Manage2FAForm(forms.SelfHandlingForm):
     action      = reverse_lazy('horizon:settings:authsettings:twofactor')

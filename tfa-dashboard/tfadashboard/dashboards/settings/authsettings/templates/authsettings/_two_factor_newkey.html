@@ -99,7 +99,8 @@ $(".enable_2fa").click(function(e) {
     $('.enable_2fa').prop('disabled', true);
 
     horizon.modals._request = $.ajax({
-        url: '/dashboard/settings/authsettings/ajax/validate_code/',
+        /*url: '/dashboard/settings/authsettings/ajax/validate_code/',*/
+        url: "{% url 'horizon:settings:authsettings:validate_code' %}",
         data: {
           "auth_code": auth_code,
           "secret": secret
