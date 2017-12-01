@@ -25,6 +25,20 @@ PANEL = 'authsettings'
 ADD_PANEL = \
     'tfadashboard.dashboards.settings.authsettings.panel.Settings_TwoFactorPanel'
 
+# A list of applications to be added to INSTALLED_APPS.
+ADD_INSTALLED_APPS = [
+    'tfadashboard',
+]
+
+# Adding js files
+ADD_JS_FILES = ['dashboard/tfadashboard/js/tfadashboard.js']
+
+# Adding SAAS FILES
+ADD_SCSS_FILES = ['dashboard/tfadashboard/css/tfadashboard.scss']
+
+#If set to True, JavaScript files and static angular html template files will be automatically discovered from the static folder in each apps listed in ADD_INSTALLED_APPS.
+AUTO_DISCOVER_STATIC_FILES = True
+
 #If set to True, the PANEL will be removed from PANEL_DASHBOARD/PANEL_GROUP.
 #Set the below option to TRUE if Two factor authentication management panel shouldn't be displayed
 REMOVE_PANEL = False

@@ -10,11 +10,14 @@
       <div class="steps">
         <div class="col-md-2 step">1</div>
         <p class="col-md-10">Download and open an authentication app, e.g.: <b>Google Authenticator</b></p>
-	<p class="app-links" style="padding-left: 20%;">
-		<a target="_blank" href='https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en'><img style ="width:45%; height: 48px !important;" alt='Get it on Google Play' src='{{ STATIC_URL }}dashboard/img/google-play.png'/></a>
+	<p class="app-links">
+		<a target="_blank" href='https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en'>
+                    <img class="auth_app_images" alt='Get it on Google Play' src='{{ STATIC_URL }}dashboard/tfadashboard/google-play.png'>
+                </a>
 
-<!--<a href='https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8tyle'><img style="width:57%;" alt='Downlaod from App Store' src='https://static1.squarespace.com/static/51ef28c5e4b04f8f7e2114d8/t/53b483cfe4b0a95d690053b0/1404339181456/Apple.png?format=500'/></a>-->
-<a target="_blank" href ='https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8tyle'><img style="width:46% !important; height: 46px !important;" class="app-store-download" src="{{ STATIC_URL }}dashboard/img/app-store.png" alt="Download from App Store"></a>
+                <a target="_blank" href ='https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8tyle'>
+                    <img  class="auth_app_images" alte="Get it on App Store" src="{{ STATIC_URL }}dashboard/tfadashboard/app-store.png">
+                </a>
 	</p>
       </div>
       <h4> Configure your Account</h4>
@@ -22,7 +25,7 @@
         <div class="col-md-2 step">2</div>
         <p class="col-md-10">Configure a new account using any of the following:</p>
       </div>
-      <ul class="codes" style ="padding-left: 20%; text-align:center;">
+      <ul class="codes">
         <li><p>Scan this QR code</p>
             {% if two_factor_qr_encoded %}
             <p><img src="data:image/svg+xml;base64,{{ two_factor_qr_encoded }}" /></p>
@@ -51,8 +54,10 @@
       </div>
     </div>
 </div>
+{% endblock %}
 
-
+{% block modal-footer %}
+    
 <script type="text/javascript">
 
     // AJAX setup functions
@@ -127,9 +132,6 @@ $(".enable_2fa").click(function(e) {
 });
 
 </script>
-
-{% endblock %}
-
-{% block modal-footer %}
     <a class="btn btn-primary enable_2fa">Enable Two-Factor Authentication</a>
 {% endblock %}
+
